@@ -1,8 +1,5 @@
 package edu.home42.sockets.models;
 
-import javax.persistence.Entity;
-
-@Entity
 public class User {
     private Long id;
     private String username;

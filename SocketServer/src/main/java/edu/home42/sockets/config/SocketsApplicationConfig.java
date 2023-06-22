@@ -18,7 +18,6 @@ public class SocketsApplicationConfig {
     @Value("${db.driver.name}")
     private String driverClassName;
 
-
     @Bean
     public HikariDataSource hikariDao() {
         HikariDataSource hikariDataSource = new HikariDataSource();
