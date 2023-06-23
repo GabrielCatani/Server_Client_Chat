@@ -1,6 +1,8 @@
 package edu.home42.sockets.config;
 
 import com.zaxxer.hikari.HikariDataSource;
+import edu.home42.sockets.repositories.UsersRepositoryImpl;
+import edu.home42.sockets.services.UsersServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +13,7 @@ import org.springframework.context.annotation.PropertySource;
 public class SocketsApplicationConfig {
     @Value("${db.url}")
     private String url;
-    @Value("${db.username}")
+    @Value("${db.user}")
     private String username;
     @Value("${db.password}")
     private String password;
@@ -27,5 +29,10 @@ public class SocketsApplicationConfig {
         hikariDataSource.setDriverClassName(this.driverClassName);
 
         return hikariDataSource;
+    }
+
+    @Bean
+    public UsersRepositoryImpl usersRepository(HikariDataSource hikariDao) {
+        return new UsersRepositoryImpl(hikariDao);
     }
 }

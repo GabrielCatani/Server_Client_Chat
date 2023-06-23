@@ -23,7 +23,7 @@ public class UsersRepositoryImpl implements UsersRepository{
     @Autowired
     public UsersRepositoryImpl(DataSource dataSource) {
         this.template = new JdbcTemplate(dataSource);
-        this.usrTable = "server_chat.users";
+        this.usrTable = "chat_users.users";
     }
 
     @Override
@@ -63,7 +63,7 @@ public class UsersRepositoryImpl implements UsersRepository{
     @Override
     public void save(Object entity) {
         NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(this.template);
-        String sql = "INSERT INTO " + this.usrTable + " (username, password) " +
+        String sql = "INSERT INTO " + this.usrTable + " (username, password)" +
                 "VALUES(:username, :password)";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
