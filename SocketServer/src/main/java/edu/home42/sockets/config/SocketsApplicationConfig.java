@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @PropertySource("classpath:db.properties")
@@ -34,5 +36,15 @@ public class SocketsApplicationConfig {
     @Bean
     public UsersRepositoryImpl usersRepository(HikariDataSource hikariDao) {
         return new UsersRepositoryImpl(hikariDao);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public UsersServiceImpl usersService(PasswordEncoder passwordEncoder, UsersRepositoryImpl usrRepo) {
+        return new UsersServiceImpl(passwordEncoder, usrRepo);
     }
 }
