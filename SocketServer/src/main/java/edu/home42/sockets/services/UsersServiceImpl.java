@@ -7,6 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
+import java.util.List;
 
 @Service
 public class UsersServiceImpl implements UsersService{
@@ -30,5 +32,17 @@ public class UsersServiceImpl implements UsersService{
 
         //Call save, from UserRepo
         usrRepo.save(usr);
+    }
+
+    @Override
+    public boolean signIn(Object entity) {
+        User usr = (User)entity;
+
+        //Find user by name
+        System.out.println(this.usrRepo.findByName(usr).get().toString());
+        // if found, check password
+        // if not, return false;
+
+        return true;
     }
 }

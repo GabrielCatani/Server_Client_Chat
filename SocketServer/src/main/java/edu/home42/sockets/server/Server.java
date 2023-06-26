@@ -65,11 +65,16 @@ public class Server {
         return line;
     }
 
-    public void close() throws IOException {
-        this.outputWriter.close();
-        this.inputBuffer.close();
-        this.inputBuffer.close();
-        this.serverSocket.close();
+    public void close()  {
+        try {
+            this.inputBuffer.close();
+            this.inputBuffer.close();
+            this.serverSocket.close();
+            this.outputWriter.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void signUpClient() throws IOException {
@@ -86,5 +91,19 @@ public class Server {
 
     public String greetings() {
         return new String("Hello from Server!");
+    }
+
+    public void signInClient() throws IOException {
+        User user = new User();
+        this.sendMessage(this.greetings());
+        this.sendMessage(">signIn");
+        this.sendMessage("Enter username:");
+        user.setUsername(this.receiveMessage());
+        this.sendMessage("Enter password:");
+        user.setPassword(this.receiveMessage());
+
+        //check if user exists, and with valid password
+        this.usersService.signIn(user);
+        this.sendMessage("Start messaging");
     }
 }

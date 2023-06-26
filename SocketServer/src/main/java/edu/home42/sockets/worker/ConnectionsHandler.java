@@ -18,7 +18,7 @@ public class ConnectionsHandler extends Thread{
     public void run() {
         try {
             server.greetings();
-            server.signUpClient();
+            server.signInClient();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

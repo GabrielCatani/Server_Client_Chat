@@ -115,4 +115,21 @@ public class UsersRepositoryImpl implements UsersRepository{
             namedTemplate.update(sql, params);
         }
     }
+
+    @Override
+    public Optional<User> findByName(User user) {
+        String sql = "SELECT * FROM " + this.usrTable + " WHERE username = ?";
+
+        RowMapper<User> rowMapper = (rs, rowNum) -> {
+            User matchedUser = new User();
+            matchedUser.setId(rs.getLong("id"));
+            matchedUser.setUsername(rs.getString("username"));
+            matchedUser.setPassword(rs.getString("password"));
+            return matchedUser;
+        };
+
+        List<User> list = this.template.query(sql, rowMapper, user.getUsername());
+
+        return Optional.of(list.get(0));
+    }
 }
