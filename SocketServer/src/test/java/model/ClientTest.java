@@ -1,4 +1,4 @@
-package edu.home42.sockets.server;
+package model;
 
 import java.io.BufferedReader;
 import java.io.IOException;

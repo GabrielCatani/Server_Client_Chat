@@ -1,4 +1,4 @@
-import edu.home42.sockets.server.ClientTest;
+import model.ClientTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

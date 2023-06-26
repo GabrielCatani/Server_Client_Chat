@@ -26,7 +26,7 @@ public class Main {
             usr.setUsername(server.receiveMessage());
             usr.setPassword(server.receiveMessage());
             System.out.println(usr.toString());
-            usrService.signUp(usr);
+            //usrService.signUp(usr);
             server.sendMessage("Successful!");
             server.close();
         } catch (IOException e) {
