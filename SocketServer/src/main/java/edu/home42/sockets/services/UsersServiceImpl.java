@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsersServiceImpl implements UsersService{
@@ -39,10 +40,14 @@ public class UsersServiceImpl implements UsersService{
         User usr = (User)entity;
 
         //Find user by name
-        System.out.println(this.usrRepo.findByName(usr).get().toString());
-        // if found, check password
-        // if not, return false;
+        Optional<User> opt = this.usrRepo.findByName(usr);
+        if (opt.isPresent()) {
+            User matchedUser = opt.get();
+            if (this.passwordEncoder.matches(usr.getPassword(), matchedUser.getPassword())) {
+                return true;
+            }
+        }
 
-        return true;
+        return false;
     }
 }

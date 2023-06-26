@@ -103,7 +103,7 @@ public class Server {
         user.setPassword(this.receiveMessage());
 
         //check if user exists, and with valid password
-        this.usersService.signIn(user);
+        System.out.println(this.usersService.signIn(user));
         this.sendMessage("Start messaging");
     }
 }
