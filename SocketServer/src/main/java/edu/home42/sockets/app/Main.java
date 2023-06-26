@@ -18,16 +18,9 @@ public class Main {
 
         Server server = new Server(usrService, 6666);
         try {
-            String request = new String();
             server.init();
             server.listenAndAccept();
-            server.sendMessage("Hello from Server!");
-            User usr = new User();
-            usr.setUsername(server.receiveMessage());
-            usr.setPassword(server.receiveMessage());
-            System.out.println(usr.toString());
-            //usrService.signUp(usr);
-            server.sendMessage("Successful!");
+            server.signUpClient();
             server.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

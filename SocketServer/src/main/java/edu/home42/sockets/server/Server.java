@@ -1,5 +1,6 @@
 package edu.home42.sockets.server;
 
+import edu.home42.sockets.models.User;
 import edu.home42.sockets.services.UsersServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -51,5 +52,17 @@ public class Server {
         this.inputBuffer.close();
         this.inputBuffer.close();
         this.serverSocket.close();
+    }
+
+    public void signUpClient() throws IOException {
+        User user = new User();
+        this.sendMessage("Hello from Server!");
+        this.sendMessage("> signUp");
+        this.sendMessage("Enter username:");
+        user.setUsername(this.receiveMessage());
+        this.sendMessage("Enter password:");
+        user.setPassword(this.receiveMessage());
+        System.out.println(user.toString());
+        this.sendMessage("Successful!");
     }
 }
