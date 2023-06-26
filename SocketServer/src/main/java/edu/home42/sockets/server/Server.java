@@ -35,16 +35,15 @@ public class Server {
 
     public void sendMessage(String msg) {
         this.outputWriter.println(msg);
+        this.outputWriter.flush();
     }
 
     public String receiveMessage() throws IOException {
-        StringBuilder msg = new StringBuilder();
         String line = new String();
-        while ((line = this.inputBuffer.readLine()) != null) {
-            msg.append(line);
-        }
 
-        return msg.toString();
+        line = this.inputBuffer.readLine();
+
+        return line;
     }
 
     public void close() throws IOException {
