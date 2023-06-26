@@ -39,7 +39,6 @@ public class UsersServiceImpl implements UsersService{
     public boolean signIn(Object entity) {
         User usr = (User)entity;
 
-        //Find user by name
         Optional<User> opt = this.usrRepo.findByName(usr);
         if (opt != null && opt.isPresent()) {
             User matchedUser = opt.get();

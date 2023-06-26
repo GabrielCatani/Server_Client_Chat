@@ -10,6 +10,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Optional;
 
 public class Main {
@@ -22,8 +23,9 @@ public class Main {
         try {
             server.init();
             while(true) {
-                server.listenAndAccept();
+                Socket clientSocket = server.listenAndAccept();
                 ConnectionsHandler connectionsHandler = new ConnectionsHandler(server);
+                connectionsHandler.setClientSocket(clientSocket);
                 connectionsHandler.start();
             }
         } catch (IOException e) {

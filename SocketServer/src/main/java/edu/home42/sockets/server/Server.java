@@ -7,20 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Server {
     private UsersServiceImpl usersService;
     private ServerSocket serverSocket;
     private Integer port;
-    private InputStreamReader inputStream;
-    private BufferedReader inputBuffer;
-
-    private PrintWriter outputWriter;
+    private List<User> loggedUsers;
 
     @Autowired
     public Server(UsersServiceImpl usersService, Integer port) {
         this.usersService = usersService;
         this.port = port;
+        this.loggedUsers = new ArrayList<User>(10);
     }
 
     public Server() {
@@ -45,78 +45,85 @@ public class Server {
         this.serverSocket = new ServerSocket(this.port);
     }
 
-    public void listenAndAccept() throws IOException {
+    public Socket listenAndAccept() throws IOException {
         Socket clientSocket = this.serverSocket.accept();
-        inputStream = new InputStreamReader(clientSocket.getInputStream());
-        inputBuffer = new BufferedReader(inputStream);
-        outputWriter = new PrintWriter(clientSocket.getOutputStream(), true);
+        return clientSocket;
     }
 
-    public void sendMessage(String msg) {
-        this.outputWriter.println(msg);
-        this.outputWriter.flush();
+    public void sendMessage(String msg, Socket clientSocket) throws IOException {
+        PrintWriter outputWriter = new PrintWriter(clientSocket.getOutputStream());
+        outputWriter.println(msg);
+        outputWriter.flush();
     }
 
-    public String receiveMessage() throws IOException {
+    public String receiveMessage(Socket clientSocket) throws IOException {
         String line = new String();
-
-        line = this.inputBuffer.readLine();
+        BufferedReader inputBuffer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        line = inputBuffer.readLine();
 
         return line;
     }
 
     public void close()  {
         try {
-            this.inputBuffer.close();
-            this.inputBuffer.close();
             this.serverSocket.close();
-            this.outputWriter.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    public void signUpClient() throws IOException {
+    public void signUpClient(Socket clientSocket) throws IOException {
         User user = new User();
-        this.sendMessage(this.greetings());
-        this.sendMessage("> signUp");
-        this.sendMessage("Enter username:");
-        user.setUsername(this.receiveMessage());
-        this.sendMessage("Enter password:");
-        user.setPassword(this.receiveMessage());
+        this.sendMessage(this.greetings(), clientSocket);
+        this.sendMessage("> signUp", clientSocket);
+        this.sendMessage("Enter username:", clientSocket);
+        user.setUsername(this.receiveMessage(clientSocket));
+        this.sendMessage("Enter password:", clientSocket);
+        user.setPassword(this.receiveMessage(clientSocket));
         System.out.println(user.toString());
-        this.sendMessage("Successful!");
+        this.sendMessage("Successful!", clientSocket);
     }
 
     public String greetings() {
         return new String("Hello from Server!");
     }
 
-    public User signInClient() throws IOException {
+    public User signInClient(Socket clientSocket) throws IOException {
         User user = new User();
-        this.sendMessage(this.greetings());
-        this.sendMessage(">signIn");
-        this.sendMessage("Enter username:");
-        user.setUsername(this.receiveMessage());
-        this.sendMessage("Enter password:");
-        user.setPassword(this.receiveMessage());
+        this.sendMessage(this.greetings(), clientSocket);
+        this.sendMessage(">signIn", clientSocket);
+        this.sendMessage("Enter username:", clientSocket);
+        user.setUsername(this.receiveMessage(clientSocket));
+        this.sendMessage("Enter password:", clientSocket);
+        user.setPassword(this.receiveMessage(clientSocket));
 
         System.out.println(this.usersService.signIn(user));
+        this.logUser(user);
+
         return user;
     }
 
-    public void startMessenger(User user) throws IOException, InterruptedException {
-        this.sendMessage("Start messaging");
+    public void startMessenger(User user, Socket clientSocket) throws IOException, InterruptedException {
+        this.sendMessage("Start messaging", clientSocket);
         String msg;
-        while ((msg = this.receiveMessage()) != null) {
+        while ((msg = this.receiveMessage(clientSocket)) != null) {
             System.out.println(msg);
             if (msg.compareTo("Exit") == 0) {
                 break;
             }
             this.sendMessage(user.getUsername()
                     + ": "
-                    + msg);
+                    + msg, clientSocket);
         }
+    }
+
+    public String logUser(User user) {
+        if (user.isLogged()) {
+            return user.getUsername() + " is already logged in.";
+        }
+        user.setLogged(true);
+        this.loggedUsers.add(user);
+        return user.getUsername() + " logged!";
     }
 }
