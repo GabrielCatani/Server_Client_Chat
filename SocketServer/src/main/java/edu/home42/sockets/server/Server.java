@@ -23,6 +23,24 @@ public class Server {
         this.port = port;
     }
 
+    public Server() {
+    }
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public UsersServiceImpl getUsersService() {
+        return usersService;
+    }
+
+    public void setUsersService(UsersServiceImpl usersService) {
+        this.usersService = usersService;
+    }
+
     public void init() throws IOException {
         this.serverSocket = new ServerSocket(this.port);
     }
@@ -56,7 +74,7 @@ public class Server {
 
     public void signUpClient() throws IOException {
         User user = new User();
-        this.sendMessage("Hello from Server!");
+        this.sendMessage(this.greetings());
         this.sendMessage("> signUp");
         this.sendMessage("Enter username:");
         user.setUsername(this.receiveMessage());
@@ -64,5 +82,9 @@ public class Server {
         user.setPassword(this.receiveMessage());
         System.out.println(user.toString());
         this.sendMessage("Successful!");
+    }
+
+    public String greetings() {
+        return new String("Hello from Server!");
     }
 }
