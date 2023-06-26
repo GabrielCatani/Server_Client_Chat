@@ -129,7 +129,9 @@ public class UsersRepositoryImpl implements UsersRepository{
         };
 
         List<User> list = this.template.query(sql, rowMapper, user.getUsername());
-
+        if (list.isEmpty()) {
+            return null;
+        }
         return Optional.of(list.get(0));
     }
 }

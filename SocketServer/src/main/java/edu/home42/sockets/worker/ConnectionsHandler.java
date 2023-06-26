@@ -18,8 +18,10 @@ public class ConnectionsHandler extends Thread{
     public void run() {
         try {
             server.greetings();
-            server.signInClient();
+            server.startMessenger(server.signInClient());
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 

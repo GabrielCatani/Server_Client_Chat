@@ -18,14 +18,8 @@ public class Main {
             System.exit(1);
         }
         try {
-            System.out.println(client.receiveMessage());
-            System.out.println(client.receiveMessage());
-            System.out.println(client.receiveMessage());
-            client.sendMessage("Marsel");
-            System.out.println(client.receiveMessage());
-            client.sendMessage("qwerty007");
-            System.out.println(client.receiveMessage());
-
+            client.signInClientToServer();
+            client.startMessaging();
             client.close();
         } catch (IOException e) {
             throw new RuntimeException(e);

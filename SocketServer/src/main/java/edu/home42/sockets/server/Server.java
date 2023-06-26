@@ -93,7 +93,7 @@ public class Server {
         return new String("Hello from Server!");
     }
 
-    public void signInClient() throws IOException {
+    public User signInClient() throws IOException {
         User user = new User();
         this.sendMessage(this.greetings());
         this.sendMessage(">signIn");
@@ -102,8 +102,21 @@ public class Server {
         this.sendMessage("Enter password:");
         user.setPassword(this.receiveMessage());
 
-        //check if user exists, and with valid password
         System.out.println(this.usersService.signIn(user));
+        return user;
+    }
+
+    public void startMessenger(User user) throws IOException, InterruptedException {
         this.sendMessage("Start messaging");
+        String msg;
+        while ((msg = this.receiveMessage()) != null) {
+            System.out.println(msg);
+            if (msg.compareTo("Exit") == 0) {
+                break;
+            }
+            this.sendMessage(user.getUsername()
+                    + ": "
+                    + msg);
+        }
     }
 }

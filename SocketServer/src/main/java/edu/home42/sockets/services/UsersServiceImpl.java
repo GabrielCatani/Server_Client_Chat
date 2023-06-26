@@ -41,7 +41,7 @@ public class UsersServiceImpl implements UsersService{
 
         //Find user by name
         Optional<User> opt = this.usrRepo.findByName(usr);
-        if (opt.isPresent()) {
+        if (opt != null && opt.isPresent()) {
             User matchedUser = opt.get();
             if (this.passwordEncoder.matches(usr.getPassword(), matchedUser.getPassword())) {
                 return true;

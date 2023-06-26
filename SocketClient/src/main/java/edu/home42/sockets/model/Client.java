@@ -44,7 +44,7 @@ public class Client {
         this.socket.close();
     }
 
-    public void signUpToClient() throws IOException {
+    public void signUpClientToServer() throws IOException {
         System.out.println(this.receiveMessage());
         System.out.println(this.receiveMessage());
         System.out.println(this.receiveMessage());
@@ -56,5 +56,32 @@ public class Client {
         this.sendMessage(sc.nextLine());
 
         System.out.println(this.receiveMessage());
+    }
+
+    public void signInClientToServer() throws IOException {
+        System.out.println(this.receiveMessage());
+        System.out.println(this.receiveMessage());
+        System.out.println(this.receiveMessage());
+
+        Scanner sc = new Scanner(System.in);
+        this.sendMessage(sc.nextLine());
+        System.out.println(this.receiveMessage());
+        this.sendMessage(sc.nextLine());
+    }
+
+    public void startMessaging() throws IOException {
+        System.out.println(this.receiveMessage());
+        Scanner sc = new Scanner(System.in);
+        String msg;
+        String receivedLine;
+
+        while (sc.hasNextLine()) {
+            msg = sc.nextLine();
+            if (msg.compareTo("Exit") == 0) {
+                break;
+            }
+            this.sendMessage(msg);
+            System.out.println(this.receiveMessage());
+        }
     }
 }
