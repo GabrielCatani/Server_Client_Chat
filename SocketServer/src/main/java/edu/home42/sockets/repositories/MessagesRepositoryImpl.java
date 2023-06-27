@@ -35,7 +35,7 @@ public class MessagesRepositoryImpl implements MessagesRepository{
             Message msg = new Message();
             msg.setId(rs.getLong("id"));
             msg.setMessage(rs.getString("message"));
-            msg.setTimestamp(rs.getTimestamp("timestamp"));
+            msg.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
             return msg;
         };
 
@@ -54,7 +54,7 @@ public class MessagesRepositoryImpl implements MessagesRepository{
             Message message = new Message();
             message.setId(rs.getLong("id"));
             message.setMessage(rs.getString("message"));
-            message.setTimestamp(rs.getTimestamp("timestamp"));
+            message.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
             return message;
         };
 

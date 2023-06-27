@@ -1,5 +1,6 @@
 package edu.home42.sockets.server;
 
+import edu.home42.sockets.models.Message;
 import edu.home42.sockets.models.User;
 import edu.home42.sockets.services.UsersServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Server {
@@ -20,7 +22,7 @@ public class Server {
     public Server(UsersServiceImpl usersService, Integer port) {
         this.usersService = usersService;
         this.port = port;
-        this.loggedUsers = new ArrayList<User>(10);
+        this.loggedUsers = new LinkedList<>();
     }
 
     public Server() {
@@ -99,31 +101,46 @@ public class Server {
         user.setPassword(this.receiveMessage(clientSocket));
 
         System.out.println(this.usersService.signIn(user));
-        this.logUser(user);
+        this.logUser(user, clientSocket);
 
         return user;
     }
 
     public void startMessenger(User user, Socket clientSocket) throws IOException, InterruptedException {
         this.sendMessage("Start messaging", clientSocket);
-        String msg;
-        while ((msg = this.receiveMessage(clientSocket)) != null) {
-            System.out.println(msg);
-            if (msg.compareTo("Exit") == 0) {
+        String msgText;
+        while ((msgText = this.receiveMessage(clientSocket)) != null) {
+            if (msgText.compareTo("Exit") == 0) {
                 break;
             }
+
             this.sendMessage(user.getUsername()
                     + ": "
-                    + msg, clientSocket);
+                    + msgText, clientSocket);
+
+            Message message = this.wrapMessage(msgText, user);
+            System.out.println(message);
+            //persist message
         }
     }
 
-    public String logUser(User user) {
+    public String logUser(User user, Socket clientSocket) {
         if (user.isLogged()) {
             return user.getUsername() + " is already logged in.";
         }
         user.setLogged(true);
+        user.setClientSocket(clientSocket);
         this.loggedUsers.add(user);
         return user.getUsername() + " logged!";
+    }
+
+    public Message wrapMessage(String msgText, User usr) {
+        Message message = new Message(msgText);
+        message.setSender(usr);
+        return message;
+    }
+
+    public void broadcastMessages() {
+
     }
 }
