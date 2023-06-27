@@ -15,8 +15,7 @@ public class ClientUserInputReaderAndSender extends Thread{
     public void run() {
         try {
             this.client.startMessaging();
-            this.client.getServerSocket().shutdownInput();
-            this.client.getServerSocket().shutdownOutput();
+            this.client.logout();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

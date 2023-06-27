@@ -87,4 +87,9 @@ public class Client {
     public Socket getServerSocket() {
         return serverSocket;
     }
+
+    public void logout() throws IOException {
+        this.serverSocket.shutdownInput();
+        this.serverSocket.shutdownOutput();
+    }
 }
