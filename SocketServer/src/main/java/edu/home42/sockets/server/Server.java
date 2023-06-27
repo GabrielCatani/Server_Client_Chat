@@ -108,22 +108,19 @@ public class Server {
     }
 
     public void startMessenger(User user, Socket clientSocket) throws IOException, InterruptedException {
-        this.sendMessage("Start messaging", clientSocket);
+        this.sendMessage("Logged", clientSocket);
         String msgText;
+        this.sendMessage("Start messaging", clientSocket);
         while ((msgText = this.receiveMessage(clientSocket)) != null) {
             if (msgText.compareTo("Exit") == 0) {
                 break;
             }
 
-            this.sendMessage(user.getUsername()
-                    + ": "
-                    + msgText, clientSocket);
-
             Message message = this.wrapMessage(msgText, user);
-            System.out.println(message);
+            System.out.println(message.toString());
             //persist message
             //broadcast message
-            this.broadcastMessage(message);
+            this.broadcastMessage(message.toString());
         }
     }
 
@@ -143,10 +140,10 @@ public class Server {
         return message;
     }
 
-    public void broadcastMessage(Message message) throws IOException {
+    public void broadcastMessage(String message) throws IOException {
         ListIterator<User> iterator = this.loggedUsers.listIterator(0);
         while(iterator.hasNext()) {
-            this.sendMessage(message.toString(), iterator.next().getClientSocket());
+            this.sendMessage(message, iterator.next().getClientSocket());
         }
     }
 }

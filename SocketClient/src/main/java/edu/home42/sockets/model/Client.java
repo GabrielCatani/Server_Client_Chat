@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Client {
-    private Socket socket;
+    private Socket serverSocket;
     private InputStreamReader inputStream;
     private BufferedReader inputBuffer;
 
@@ -18,10 +18,10 @@ public class Client {
     }
 
     public Client(String ip, Integer port) throws IOException {
-        this.socket = new Socket(ip, port);
-        this.inputStream = new InputStreamReader(this.socket.getInputStream());
+        this.serverSocket = new Socket(ip, port);
+        this.inputStream = new InputStreamReader(this.serverSocket.getInputStream());
         this.inputBuffer = new BufferedReader(this.inputStream);
-        this.outputWriter = new PrintWriter(this.socket.getOutputStream());
+        this.outputWriter = new PrintWriter(this.serverSocket.getOutputStream());
     }
 
     public void sendMessage(String msg) {
@@ -41,7 +41,7 @@ public class Client {
         this.outputWriter.close();
         this.inputBuffer.close();
         this.inputStream.close();
-        this.socket.close();
+        this.serverSocket.close();
     }
 
     public void signUpClientToServer() throws IOException {
@@ -73,15 +73,18 @@ public class Client {
         System.out.println(this.receiveMessage());
         Scanner sc = new Scanner(System.in);
         String msg;
-        String receivedLine;
 
         while (sc.hasNextLine()) {
             msg = sc.nextLine();
             if (msg.compareTo("Exit") == 0) {
+                System.out.println("You have left the chat.");
                 break;
             }
             this.sendMessage(msg);
-            System.out.println(this.receiveMessage());
         }
+    }
+
+    public Socket getServerSocket() {
+        return serverSocket;
     }
 }

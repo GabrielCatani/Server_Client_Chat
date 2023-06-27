@@ -1,17 +1,21 @@
 package edu.home42.sockets.app;
 
 import edu.home42.sockets.model.Client;
+import edu.home42.sockets.model.ClientServerOutputReader;
+import edu.home42.sockets.model.ClientUserInputReaderAndSender;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Client client = null;
+        ClientServerOutputReader messageGetter = null;
+        ClientUserInputReaderAndSender messageSender = null;
+
         try {
             client = new Client("127.0.0.1", 6666);
+            messageSender = new ClientUserInputReaderAndSender(client);
+            messageGetter = new ClientServerOutputReader(client);
         }
         catch (IOException e) {
             System.err.println("Unable to connect to server!");
@@ -19,8 +23,9 @@ public class Main {
         }
         try {
             client.signInClientToServer();
-            client.startMessaging();
-            client.close();
+            messageSender.start();
+            messageGetter.start();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
