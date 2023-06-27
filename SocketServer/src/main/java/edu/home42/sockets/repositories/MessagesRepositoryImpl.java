@@ -34,6 +34,7 @@ public class MessagesRepositoryImpl implements MessagesRepository{
         RowMapper<Message> rowMapper = (rs, rowNum) -> {
             Message msg = new Message();
             msg.setId(rs.getLong("id"));
+            msg.setSender(new User(msg.getId(), rs.getString("sender")));
             msg.setMessage(rs.getString("message"));
             msg.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
             return msg;
@@ -53,6 +54,7 @@ public class MessagesRepositoryImpl implements MessagesRepository{
         RowMapper<Message> rowMapper = (rs, rowNum) -> {
             Message message = new Message();
             message.setId(rs.getLong("id"));
+            message.setSender(new User(message.getId(), rs.getString("sender")));
             message.setMessage(rs.getString("message"));
             message.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
             return message;
@@ -64,12 +66,13 @@ public class MessagesRepositoryImpl implements MessagesRepository{
     @Override
     public void save(Object entity) {
         NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(this.template);
-        String sql = "INSERT INTO " + this.table + " (username, password)" +
-                "VALUES(:message, :timestamp)";
+        String sql = "INSERT INTO " + this.table + " (sender, message, timestamp)" +
+                "VALUES(:sender, :message, :timestamp)";
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         Message msg = (Message)entity;
-        params.addValue("message", msg.getMessage())
+        params.addValue("sender", msg.getSender().getUsername())
+                .addValue("message", msg.getMessage())
                 .addValue("timestamp", msg.getTimestamp());
 
         namedTemplate.update(sql, params);
@@ -86,6 +89,7 @@ public class MessagesRepositoryImpl implements MessagesRepository{
         }
 
         String sql = "UPDATE " + this.table + " SET "
+                + "sender = :sender"
                 + "message = :message,"
                 + "timestamp = :timestamp"
                 + " WHERE id = :id";
@@ -94,7 +98,8 @@ public class MessagesRepositoryImpl implements MessagesRepository{
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("message", msg.getMessage())
                 .addValue("timestamp", msg.getTimestamp())
-                .addValue("id", msg.getId());
+                .addValue("id", msg.getId())
+                .addValue("sender", msg.getSender());
 
         namedTemplate.update(sql, params);
     }
@@ -105,7 +110,6 @@ public class MessagesRepositoryImpl implements MessagesRepository{
         Optional opt = this.findById(id);
         if (opt.isPresent()) {
             msg = (Message) opt.get();
-
 
             String sql = "DELETE FROM " + this.table + " WHERE id = :id";
 

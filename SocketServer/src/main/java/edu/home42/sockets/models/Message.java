@@ -12,7 +12,8 @@ public class Message {
     public Message() {
     }
 
-    public Message(String msg) {
+    public Message(String msg, User sender) {
+        this.sender = sender;
         this.message = msg;
         this.timestamp = LocalDateTime.now();
     }
@@ -53,4 +54,5 @@ public class Message {
     public String toString() {
         return this.sender.getUsername() + ": " + this.message;
     }
+
 }

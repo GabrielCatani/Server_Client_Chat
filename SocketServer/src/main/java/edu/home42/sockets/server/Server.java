@@ -2,6 +2,7 @@ package edu.home42.sockets.server;
 
 import edu.home42.sockets.models.Message;
 import edu.home42.sockets.models.User;
+import edu.home42.sockets.services.MessageServiceImpl;
 import edu.home42.sockets.services.UsersServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,13 +16,15 @@ import java.util.ListIterator;
 
 public class Server {
     private UsersServiceImpl usersService;
+    private MessageServiceImpl msgService;
     private ServerSocket serverSocket;
     private Integer port;
     private List<User> loggedUsers;
 
     @Autowired
-    public Server(UsersServiceImpl usersService, Integer port) {
+    public Server(UsersServiceImpl usersService, MessageServiceImpl msgService ,Integer port) {
         this.usersService = usersService;
+        this.msgService = msgService;
         this.port = port;
         this.loggedUsers = new LinkedList<>();
     }
@@ -116,9 +119,12 @@ public class Server {
                 break;
             }
 
-            Message message = this.wrapMessage(msgText, user);
+            Message message = new Message(msgText, user);
             System.out.println(message.toString());
+
             //persist message
+            this.msgService.saveMessage(message);
+
             //broadcast message
             this.broadcastMessage(message.toString());
         }
@@ -132,12 +138,6 @@ public class Server {
         user.setClientSocket(clientSocket);
         this.loggedUsers.add(user);
         return user.getUsername() + " logged!";
-    }
-
-    public Message wrapMessage(String msgText, User usr) {
-        Message message = new Message(msgText);
-        message.setSender(usr);
-        return message;
     }
 
     public void broadcastMessage(String message) throws IOException {

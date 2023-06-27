@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import edu.home42.sockets.repositories.MessagesRepositoryImpl;
 import edu.home42.sockets.repositories.UsersRepositoryImpl;
 import edu.home42.sockets.server.Server;
+import edu.home42.sockets.services.MessageServiceImpl;
 import edu.home42.sockets.services.UsersServiceImpl;
 import edu.home42.sockets.worker.ConnectionsHandler;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,5 +67,10 @@ public class SocketsApplicationConfig {
     @Bean
     public Server server() {
         return new Server();
+    }
+
+    @Bean
+    public MessageServiceImpl messageService(MessagesRepositoryImpl msgRepo) {
+        return new MessageServiceImpl(msgRepo);
     }
 }
