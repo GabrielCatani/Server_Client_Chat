@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 public class Server {
     private UsersServiceImpl usersService;
@@ -121,6 +122,8 @@ public class Server {
             Message message = this.wrapMessage(msgText, user);
             System.out.println(message);
             //persist message
+            //broadcast message
+            this.broadcastMessage(message);
         }
     }
 
@@ -140,7 +143,10 @@ public class Server {
         return message;
     }
 
-    public void broadcastMessages() {
-
+    public void broadcastMessage(Message message) throws IOException {
+        ListIterator<User> iterator = this.loggedUsers.listIterator(0);
+        while(iterator.hasNext()) {
+            this.sendMessage(message.toString(), iterator.next().getClientSocket());
+        }
     }
 }
