@@ -23,6 +23,7 @@ public class UsersServiceImpl implements UsersService{
         this.usrRepo = usrRepo;
     }
 
+    //TODO: check if username already exists
     @Override
     public void signUp(Object entity) {
         User usr = (User)entity;

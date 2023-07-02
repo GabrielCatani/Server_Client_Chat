@@ -16,18 +16,17 @@ public class Main {
             client = new Client("127.0.0.1", 6666);
             messageSender = new ClientUserInputReaderAndSender(client);
             messageGetter = new ClientServerOutputReader(client);
+
+            if (client.initialMenu()) {
+                if (client.roomMenu()) {
+                    messageSender.start();
+                    messageGetter.start();
+                }
+            }
         }
         catch (IOException e) {
             System.err.println("Unable to connect to server!");
             System.exit(1);
-        }
-        try {
-            client.signInClientToServer();
-            messageSender.start();
-            messageGetter.start();
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }

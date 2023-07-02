@@ -8,6 +8,7 @@ public class User {
     private String password;
     private boolean logged;
     private Socket clientSocket;
+    private Long currentRoomId;
 
     public User() {
     }
@@ -62,5 +63,13 @@ public class User {
 
     public void setClientSocket(Socket clientSocket) {
         this.clientSocket = clientSocket;
+    }
+
+    public Long getCurrentRoomId() {
+        return currentRoomId;
+    }
+
+    public void setCurrentRoomId(Long currentRoomId) {
+        this.currentRoomId = currentRoomId;
     }
 }

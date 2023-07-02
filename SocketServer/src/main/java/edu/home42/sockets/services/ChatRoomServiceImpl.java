@@ -20,6 +20,11 @@ public class ChatRoomServiceImpl<T> implements ChatRoomService{
     }
 
     @Override
+    public Long getChatRoomId(String roomName) {
+        return null;
+    }
+
+    @Override
     public void changeNameOfChatRoom(Object entity) {
         ChatRoom chatRoomUpdated = (ChatRoom)entity;
 

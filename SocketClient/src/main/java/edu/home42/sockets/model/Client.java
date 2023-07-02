@@ -58,7 +58,7 @@ public class Client {
         System.out.println(this.receiveMessage());
     }
 
-    public void signInClientToServer() throws IOException {
+    public boolean signInClientToServer() throws IOException {
         System.out.println(this.receiveMessage());
         System.out.println(this.receiveMessage());
         System.out.println(this.receiveMessage());
@@ -67,6 +67,13 @@ public class Client {
         this.sendMessage(sc.nextLine());
         System.out.println(this.receiveMessage());
         this.sendMessage(sc.nextLine());
+        String loginStatus = this.receiveMessage();
+
+        System.out.println(loginStatus);
+        if (loginStatus.compareTo("Log in Failed!") == 0) {
+            return false;
+        }
+        return true;
     }
 
     public void startMessaging() throws IOException {
@@ -91,5 +98,77 @@ public class Client {
     public void logout() throws IOException {
         this.serverSocket.shutdownInput();
         this.serverSocket.shutdownOutput();
+    }
+
+    public boolean initialMenu() throws IOException {
+        System.out.println(this.receiveMessage());
+        System.out.println(this.receiveMessage());
+        System.out.println(this.receiveMessage());
+        System.out.println(this.receiveMessage());
+        System.out.print(this.receiveMessage());
+
+        Scanner sc = new Scanner(System.in);
+        String msg = sc.nextLine();
+        this.sendMessage(msg);
+
+        switch (Integer.parseInt(msg)) {
+            case 1:
+                return this.signInClientToServer();
+            case 2:
+                this.signUpClientToServer();
+                break;
+            default:
+                this.logout();
+                break;
+        }
+        return false;
+    }
+
+    public boolean roomMenu() throws IOException {
+        System.out.println(this.receiveMessage());
+        System.out.println(this.receiveMessage());
+        System.out.println(this.receiveMessage());
+        System.out.print(this.receiveMessage());
+
+        Scanner sc = new Scanner(System.in);
+        String option = sc.nextLine();
+        this.sendMessage(option);
+
+        switch (Integer.parseInt(option)) {
+            case 1:
+                this.createNewRoom();
+                break;
+            case 2:
+                return this.listRoomsToChoose();
+            default:
+                break;
+        }
+
+        return false;
+    }
+
+    public void createNewRoom() throws IOException {
+        System.out.print(this.receiveMessage());
+        Scanner sc = new Scanner(System.in);
+
+        this.sendMessage(sc.nextLine());
+    }
+
+    public boolean listRoomsToChoose() throws IOException {
+        StringBuilder fullMsg = new StringBuilder();
+        fullMsg.append(this.receiveMessage());
+
+        String outputForClient = fullMsg.toString().replaceAll("\\|", "\n");
+
+        System.out.println(outputForClient);
+        Scanner sc = new Scanner(System.in);
+
+        this.sendMessage(sc.nextLine());
+        Long roomId = Long.parseLong(this.receiveMessage());
+        if (roomId != -1L) {
+            return true;
+        }
+
+        return false;
     }
 }

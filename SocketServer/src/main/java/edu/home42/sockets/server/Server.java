@@ -1,7 +1,9 @@
 package edu.home42.sockets.server;
 
+import edu.home42.sockets.models.ChatRoom;
 import edu.home42.sockets.models.Message;
 import edu.home42.sockets.models.User;
+import edu.home42.sockets.services.ChatRoomServiceImpl;
 import edu.home42.sockets.services.MessageServiceImpl;
 import edu.home42.sockets.services.UsersServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +19,18 @@ import java.util.ListIterator;
 public class Server {
     private UsersServiceImpl usersService;
     private MessageServiceImpl msgService;
+    private ChatRoomServiceImpl chatRoomService;
     private ServerSocket serverSocket;
     private Integer port;
     private List<User> loggedUsers;
+    private List<ChatRoom> availableRooms;
+
 
     @Autowired
-    public Server(UsersServiceImpl usersService, MessageServiceImpl msgService ,Integer port) {
+    public Server(UsersServiceImpl usersService, MessageServiceImpl msgService , ChatRoomServiceImpl chatRoomService,Integer port) {
         this.usersService = usersService;
         this.msgService = msgService;
+        this.chatRoomService = chatRoomService;
         this.port = port;
         this.loggedUsers = new LinkedList<>();
     }
@@ -87,6 +93,7 @@ public class Server {
         user.setUsername(this.receiveMessage(clientSocket));
         this.sendMessage("Enter password:", clientSocket);
         user.setPassword(this.receiveMessage(clientSocket));
+        //Persist user
         System.out.println(user.toString());
         this.sendMessage("Successful!", clientSocket);
     }
@@ -104,8 +111,13 @@ public class Server {
         this.sendMessage("Enter password:", clientSocket);
         user.setPassword(this.receiveMessage(clientSocket));
 
-        System.out.println(this.usersService.signIn(user));
-        this.logUser(user, clientSocket);
+        if (this.usersService.signIn(user)) {
+            this.logUser(user, clientSocket);
+            this.sendMessage("Log in successful!", clientSocket);
+        }
+        else {
+            this.sendMessage("Log in Failed!", clientSocket);
+        }
 
         return user;
     }
@@ -145,5 +157,74 @@ public class Server {
         while(iterator.hasNext()) {
             this.sendMessage(message, iterator.next().getClientSocket());
         }
+    }
+
+    public User initialMenu(Socket clientSocket) throws IOException {
+        this.sendMessage("Hello from Server!", clientSocket);
+        this.sendMessage("1. Sign In\n2. Sign up\n3. Exit\n> ", clientSocket);
+
+        Integer option = Integer.parseInt(this.receiveMessage(clientSocket));
+        User user = null;
+        switch(option) {
+            case 1:
+                user = this.signInClient(clientSocket);
+                break;
+            case 2:
+                this.signUpClient(clientSocket);
+                break;
+            default:
+                break;
+        }
+        return user;
+    }
+
+    public Long roomMenu(Socket clientSocket) throws IOException {
+        this.sendMessage("1. Create Room\n2. Choose Room\n3. Exit\n> ", clientSocket);
+        Integer usrOption = Integer.parseInt(this.receiveMessage(clientSocket));
+
+        switch (usrOption) {
+            case 1:
+                this.createNewRoom(clientSocket);
+                break;
+            case 2:
+                return this.listRoomsToChoose(clientSocket);
+            default:
+                break;
+        }
+
+        return -1L;
+    }
+
+    public void createNewRoom(Socket clientSocket) throws IOException {
+        this.sendMessage("Enter new room name: ", clientSocket);
+        ChatRoom newChatRoom = new ChatRoom();
+        newChatRoom.setName(this.receiveMessage(clientSocket));
+        this.chatRoomService.addNewChatRoom(newChatRoom);
+    }
+
+    public Long listRoomsToChoose(Socket clientSocket) throws IOException {
+        this.availableRooms = this.chatRoomService.getAllChatRooms();
+
+        StringBuilder availableRoomsToShow = new StringBuilder();
+
+        int index = 0;
+        String line = null;
+        for (ChatRoom room: this.availableRooms) {
+            index++;
+            line = index + "." + room.getName() + "|";
+            availableRoomsToShow.append(line);
+        }
+        availableRoomsToShow.append(++index + ".Exit");
+
+        this.sendMessage(availableRoomsToShow.toString(), clientSocket);
+        Integer usrOption = Integer.parseInt(this.receiveMessage(clientSocket));
+
+        if (usrOption <= index) {
+            Long roomId = this.availableRooms.get(usrOption - 1).getId();
+            this.sendMessage(roomId.toString(), clientSocket);
+            return roomId;
+        }
+
+        return -1l;
     }
 }

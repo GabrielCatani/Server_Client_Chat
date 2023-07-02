@@ -6,6 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -58,6 +59,7 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepository{
 
     @Override
     public void save(Object entity) {
+        NamedParameterJdbcTemplate namedTemplate = new NamedParameterJdbcTemplate(this.template);
         String sql = "INSERT INTO " + this.table + "(name) VALUES"
                 + "(:name)";
 
@@ -65,7 +67,7 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepository{
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("name", chatRoom.getName());
-        this.template.update(sql, params);
+        namedTemplate.update(sql, params);
     }
 
     @Override

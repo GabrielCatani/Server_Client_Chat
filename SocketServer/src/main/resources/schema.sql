@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS chat_users.messages (
    sender VARCHAR(100),
    message VARCHAR(250),
    timestamp TIMESTAMP
-)
-CREATE TABLE IF NOT EXISTS chats_users.rooms (
+);
+CREATE TABLE IF NOT EXISTS chat_users.rooms (
     id SERIAL PRIMARY KEY,
     name VARCHAR (50),
     id_creator INTEGER

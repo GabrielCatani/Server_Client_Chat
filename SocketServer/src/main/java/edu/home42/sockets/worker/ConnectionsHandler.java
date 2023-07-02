@@ -25,14 +25,18 @@ public class ConnectionsHandler extends Thread{
     @Override
     public void run() {
         try {
-            User newUser = server.signInClient(this.clientSocket);
-            server.startMessenger(newUser, this.clientSocket);
+            User newUser = server.initialMenu(this.clientSocket);
+            if (newUser != null && newUser.isLogged()) {
+                Long chatRoomId = server.roomMenu(this.clientSocket);
+                if (chatRoomId != -1L) {
+                    newUser.setCurrentRoomId(chatRoomId);
+                    server.startMessenger(newUser, clientSocket);
+                }
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 }

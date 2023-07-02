@@ -4,6 +4,7 @@ import edu.home42.sockets.config.SocketsApplicationConfig;
 import edu.home42.sockets.models.User;
 import edu.home42.sockets.repositories.UsersRepositoryImpl;
 import edu.home42.sockets.server.Server;
+import edu.home42.sockets.services.ChatRoomServiceImpl;
 import edu.home42.sockets.services.MessageServiceImpl;
 import edu.home42.sockets.services.UsersServiceImpl;
 import edu.home42.sockets.worker.ConnectionsHandler;
@@ -19,8 +20,9 @@ public class Main {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SocketsApplicationConfig.class);
         UsersServiceImpl usrService = context.getBean(UsersServiceImpl.class);
         MessageServiceImpl msgService = context.getBean(MessageServiceImpl.class);
+        ChatRoomServiceImpl chatRoomService = context.getBean(ChatRoomServiceImpl.class);
 
-        Server server = new Server(usrService, msgService, 6666);
+        Server server = new Server(usrService, msgService, chatRoomService, 6666);
 
         try {
             server.init();
