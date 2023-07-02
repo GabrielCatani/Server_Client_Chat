@@ -1,6 +1,7 @@
 package edu.home42.sockets.config;
 
 import com.zaxxer.hikari.HikariDataSource;
+import edu.home42.sockets.repositories.ChatRoomRepositoryImpl;
 import edu.home42.sockets.repositories.MessagesRepositoryImpl;
 import edu.home42.sockets.repositories.UsersRepositoryImpl;
 import edu.home42.sockets.server.Server;
@@ -60,6 +61,12 @@ public class SocketsApplicationConfig {
     }
 
     @Bean
+    public MessageServiceImpl messageService(MessagesRepositoryImpl msgRepo) {
+        return new MessageServiceImpl(msgRepo);
+    }
+
+
+    @Bean
     public ConnectionsHandler connectionsHandler(Server server) {
         return new ConnectionsHandler(server);
     }
@@ -69,8 +76,4 @@ public class SocketsApplicationConfig {
         return new Server();
     }
 
-    @Bean
-    public MessageServiceImpl messageService(MessagesRepositoryImpl msgRepo) {
-        return new MessageServiceImpl(msgRepo);
-    }
 }
