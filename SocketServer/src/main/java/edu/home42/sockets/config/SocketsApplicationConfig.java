@@ -5,6 +5,7 @@ import edu.home42.sockets.repositories.ChatRoomRepositoryImpl;
 import edu.home42.sockets.repositories.MessagesRepositoryImpl;
 import edu.home42.sockets.repositories.UsersRepositoryImpl;
 import edu.home42.sockets.server.Server;
+import edu.home42.sockets.services.ChatRoomServiceImpl;
 import edu.home42.sockets.services.MessageServiceImpl;
 import edu.home42.sockets.services.UsersServiceImpl;
 import edu.home42.sockets.worker.ConnectionsHandler;
@@ -65,6 +66,15 @@ public class SocketsApplicationConfig {
         return new MessageServiceImpl(msgRepo);
     }
 
+    @Bean
+    public ChatRoomRepositoryImpl chatRoomRepository (DataSource dataSource) {
+        return new ChatRoomRepositoryImpl(dataSource);
+    }
+
+    @Bean
+    public ChatRoomServiceImpl chatRoomService(ChatRoomRepositoryImpl chatRoomRepository) {
+        return new ChatRoomServiceImpl(chatRoomRepository);
+    }
 
     @Bean
     public ConnectionsHandler connectionsHandler(Server server) {
