@@ -95,6 +95,7 @@ public class Server {
         user.setPassword(this.receiveMessage(clientSocket));
         //Persist user
         System.out.println(user.toString());
+        this.usersService.signUp(user);
         this.sendMessage("Successful!", clientSocket);
     }
 

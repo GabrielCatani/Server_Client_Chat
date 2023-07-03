@@ -22,6 +22,9 @@ public class ConnectionsHandler extends Thread{
         this.clientSocket = clientSocket;
     }
 
+    //TODO: Transform toStirng from Message into Json
+    //TODO: Add column "RoomID" to Message Table
+    //TODO: Replace all string messages between Client-Server for JSON
     @Override
     public void run() {
         try {
